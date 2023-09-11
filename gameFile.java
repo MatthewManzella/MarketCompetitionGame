@@ -89,11 +89,10 @@ public class gameFile {
 				// Accounts for if choice is == to 1 or 2, or 3 if in game.
 				if ((final_choice == 1 || final_choice == 2) || (inGame == true && final_choice == 3)) {
 					return final_choice;
-					// If in game.
+				// If in game already.
 				} else if (inGame == true) {
 					// See playGame note next to modeSelector. "0" designates that an attempt to
-					// merge was made with
-					// only one company. Appropriate message is displayed for this case.
+					// merge was made with only one company. Appropriate message is displayed for this case.
 					if (choice.equals("0")) {
 						System.out.print(
 								"\nEnter 2 to break up your company or 3 to end before your five moves are done: ");
@@ -333,7 +332,8 @@ public class gameFile {
 		/*
 		 * Verifies that the company entered by the user in the merge or break up method
 		 * exists in the companies arrayList. User is re-prompted until a correct
-		 * company # is entered.
+		 * company # is entered. In the case of a merger, the code also ensures that
+		 * the same company isn't entered twice.
 		 * 
 		 * Parameters: String of the user's input for the company #, list of companies
 		 * in the market, scanner, and the string of the user's input for the first
@@ -342,19 +342,17 @@ public class gameFile {
 		 * 
 		 * Returns: A proper company #
 		 */
-		while (true) {
+		while (!companies.contains("Company #" + identifier)||(identifier.equals(prevIdentifier))) {
 			// Covers for if the company is not in the companies ArrayList.
 			if (!companies.contains("Company #" + identifier)) {
 				System.out.print("\nERROR. Enter a company that is currently listed in the market above: Company #");
-				identifier = sc.nextLine();
 				// Covers for if the second company to be merged is the same as the first.
 			} else if (identifier.equals(prevIdentifier)) {
 				System.out
 						.print("\nERROR. Enter a company that is different from the first one you entered: Company #");
-				identifier = sc.nextLine();
-			} else {
-				break;
+				
 			}
+			identifier = sc.nextLine();
 		}
 		return identifier;
 	}
@@ -422,24 +420,28 @@ public class gameFile {
 		 * Parameters: User's initial input for the Company #_.a's share, scanner, and
 		 * the ceiling for how high of a share you can enter.
 		 * 
+		 * Returns: The verified, proper share for Company #_.a (int)
 		 */
-		while (true) {
+		int final_aShare = 0;
+		int round_tracker = 0;
+		while (!(final_aShare > 0 && final_aShare < maxShare)) {
+			// Ensures that the user is not re-prompted if already prompted in playGame
+			if (round_tracker !=0)
+				aShare = sc.nextLine();
+			round_tracker++;
 			try {
-				int final_aShare = Integer.parseInt(aShare);
+				final_aShare = Integer.parseInt(aShare);
 				// Returns if the share is between 0 and maxShare.
-				if (final_aShare > 0 && final_aShare < maxShare) {
-					return final_aShare;
-					// Re-prompts user if criteria above are not met.
-				} else {
+				if (!(final_aShare > 0 && final_aShare < maxShare)) {
 					System.out.print("\nERROR. Please enter an integer less than " + maxShare + ": ");
-					aShare = sc.nextLine();
 				}
 				// Accounts for if the user's input is not a whole number.
 			} catch (NumberFormatException e) {
 				System.out.print("\nERROR. Please enter an integer that is less than " + maxShare + ": ");
-				aShare = sc.nextLine();
+				final_aShare = 0;
 			}
 		}
+		return final_aShare;
 	}
 
 	// Suppress warning accounts for type casting of ArrayLists companies and shares
@@ -579,3 +581,4 @@ public class gameFile {
 		return cr4;
 	}
 }
+
