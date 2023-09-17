@@ -17,6 +17,10 @@ public class gameFile {
 		 * 
 		 * This is all controlled using a while loop in which the user is asked to enter
 		 * a 1 to continue playing after a round ends.
+		 * 
+		 * 
+		 * Calls: modeSelector, marketGenerator, displayMarket, hhiMode, cr4Mode, playGame, breakUp, merge
+		   Called by: None
 		 */
 		Scanner sc = new Scanner(System.in);
 		// Pre-setting playAgain to enter the loop the first time.
@@ -39,7 +43,7 @@ public class gameFile {
 			System.out.print(
 					"\nSelect mode 1 or 2 to determine which criteria will be used to determine level of competition: ");
 			String choice = sc.nextLine();
-			int mode = modeSelector(choice, sc, false);
+			String mode = modeSelector(choice, sc, false);
 
 			// The percentage per company market shares are randomly generated in the
 			// marketGenerator
@@ -58,7 +62,7 @@ public class gameFile {
 			displayMarket(companies, shares);
 
 			// Selects the mode based on the user's input from previously in the program.
-			if (mode == 1) {
+			if (mode.equals("1")) {
 				hhiMode(companies, shares, sc);
 			} else {
 				cr4Mode(companies, shares, sc);
@@ -70,7 +74,7 @@ public class gameFile {
 		sc.close();
 	}
 
-	private static int modeSelector(String choice, Scanner sc, boolean inGame) {
+	private static String modeSelector(String choice, Scanner sc, boolean inGame) {
 		/*
 		 * User's response is verified to be 1 or 2 (or 3 if in-game). The user is
 		 * re-prompted if they didn't enter 1 or 2 (or 3 if in game).
@@ -81,44 +85,25 @@ public class gameFile {
 		 * select merge, break, or quit (hence the 3rd option) during the game.
 		 * 
 		 * Return: user's verified choice: either 1 or 2 (or 3 if in game).
+		 * Calls: None
+		   Called by: main, playGame
 		 */
-		while (true) {
-			try {
-				// triggers a NumberFormatException if choice != int
-				int final_choice = Integer.parseInt(choice);
-				// Accounts for if choice is == to 1 or 2, or 3 if in game.
-				if ((final_choice == 1 || final_choice == 2) || (inGame == true && final_choice == 3)) {
-					return final_choice;
-				// If in game already.
-				} else if (inGame == true) {
-					// See playGame note next to modeSelector. "0" designates that an attempt to
-					// merge was made with only one company. Appropriate message is displayed for this case.
-					if (choice.equals("0")) {
-						System.out.print(
-								"\nEnter 2 to break up your company or 3 to end before your five moves are done: ");
-					} else {
-						System.out.print("\nERROR. Enter 1 or 2 (or 3 to end before your five moves are done): ");
-					}
+		while (!((choice.equals("1") || choice.equals("2")) || (inGame == true && choice.equals("3")))) {
+			// triggers a NumberFormatException if choice != int
+			if (inGame == true) {
+				// See playGame note next to modeSelector. "0" designates that an attempt to merge was made with
+				// only one company. Appropriate message is displayed for this case.
+				if (choice.equals("0")) {
+					System.out.print("\nEnter 2 to break up your company or 3 to end before your five moves are done: ");
 				} else {
 					System.out.print("\nERROR. Enter 1 or 2: ");
 				}
-				choice = sc.nextLine();
-				// Accounts for non-integer values/characters. Prints appropriate message based
-				// on circumstance (see above).
-			} catch (NumberFormatException e) {
-				if (inGame == true) {
-					if (choice == "0") {
-						System.out.print(
-								"\nEnter 2 to break up your company or 3 to end before your five moves are done: ");
-					} else {
-						System.out.print("\nERROR. Enter 1 or 2 (or 3 to end before your five moves are done): ");
-					}
-				} else {
-					System.out.print("\nERROR. Enter 1 or 2: ");
-				}
-				choice = sc.nextLine();
+			} else {
+				System.out.print("\nERROR. Enter 1 or 2: ");
 			}
+			choice = sc.nextLine();
 		}
+		return choice;
 	}
 
 	private static ArrayList<Integer> marketGenerator() {
@@ -128,6 +113,10 @@ public class gameFile {
 
 		// Return: shares, an arrayList of all percent shares generated in this function
 		// in descending order.
+		// Calls: None
+		// Called by: main
+		//
+		
 		ArrayList<Integer> shares = new ArrayList<>();
 		int sum = 0;
 		int randint = 0;
@@ -191,6 +180,10 @@ public class gameFile {
 
 		// Every company is displayed alongside their share in the market (each line:
 		// company # x : y%)
+		// Calls: None
+		// Called by: main, playGame
+		//
+		
 		System.out.println("\n");
 		for (int i = 0; i < companies.size(); i++) {
 			System.out.println(companies.get(i) + "  :  " + shares.get(i) + "%");
@@ -208,6 +201,9 @@ public class gameFile {
 		 * becoming the target for the game.
 		 * 
 		 * Parameters: List of companies, list of shares, scanner.
+		 * 
+		 * Calls: hhi_calc, displayMarket, playGame, rangeFormatter, companyVerifier
+		   Called by: main
 		 */
 		Random random = new Random();
 		// List of possible competition levels.
@@ -257,6 +253,9 @@ public class gameFile {
 		 * becoming the target for the game.
 		 * 
 		 * Parameters: List of companies, list of shares, scanner.
+		 * 
+		 * Calls: cr4_calc, displayMarket, playGame, rangeFormatter, companyVerifier
+		   Called by: main
 		 */
 
 		// See hhiMode for additional comments. Format/procedures are identical.
@@ -288,15 +287,15 @@ public class gameFile {
 		playGame(sc, companies, shares, "cr4", targetRange, targetComp);
 	}
 
-	private static ArrayList<Object> merge(ArrayList<String> companies, ArrayList<Integer> shares, Scanner sc) {
+	private static void merge(ArrayList<String> companies, ArrayList<Integer> shares, Scanner sc) {
 		/*
 		 * Merges two companies (combines the companies to format Company #A/B, adds the
 		 * shares together) as requested by the user in game.
 		 * 
 		 * Parameters: Companies list, shares list, scanner.
-		 *
-		 * Returns: An ArrayList containing the new list of companies and shares (to be
-		 * unpacked in playGame).
+		 * 
+		 * Calls: companyVerifier
+		   Called by: playGame
 		 */
 		System.out.print("\nEnter the first company that is part of the merger: Company #");
 		String identifier1 = sc.nextLine();
@@ -321,10 +320,6 @@ public class gameFile {
 		// Removes the remnants of company2 from the market.
 		shares.remove(companies.indexOf(company2));
 		companies.remove(companies.indexOf(company2));
-		// Creates an arrayList containing companies at index 0 and shares at index 1 to
-		// be returned + unpacked.
-		ArrayList<Object> arr = new ArrayList<>(Arrays.asList(companies, shares));
-		return arr;
 	}
 
 	private static String companyVerifier(String identifier, ArrayList<String> companies, Scanner sc,
@@ -332,8 +327,8 @@ public class gameFile {
 		/*
 		 * Verifies that the company entered by the user in the merge or break up method
 		 * exists in the companies arrayList. User is re-prompted until a correct
-		 * company # is entered. In the case of a merger, the code also ensures that
-		 * the same company isn't entered twice.
+		 * company # is entered. In the case of a merger, the code also ensures that the
+		 * same company isn't entered twice.
 		 * 
 		 * Parameters: String of the user's input for the company #, list of companies
 		 * in the market, scanner, and the string of the user's input for the first
@@ -341,8 +336,11 @@ public class gameFile {
 		 * repeats).
 		 * 
 		 * Returns: A proper company #
+		 * 
+		 * Calls: None
+		   Called by: merge, breakUp
 		 */
-		while (!companies.contains("Company #" + identifier)||(identifier.equals(prevIdentifier))) {
+		while (!companies.contains("Company #" + identifier) || (identifier.equals(prevIdentifier))) {
 			// Covers for if the company is not in the companies ArrayList.
 			if (!companies.contains("Company #" + identifier)) {
 				System.out.print("\nERROR. Enter a company that is currently listed in the market above: Company #");
@@ -350,14 +348,14 @@ public class gameFile {
 			} else if (identifier.equals(prevIdentifier)) {
 				System.out
 						.print("\nERROR. Enter a company that is different from the first one you entered: Company #");
-				
+
 			}
 			identifier = sc.nextLine();
 		}
 		return identifier;
 	}
 
-	private static ArrayList<Object> breakUp(ArrayList<String> companies, ArrayList<Integer> shares, Scanner sc) {
+	private static void breakUp(ArrayList<String> companies, ArrayList<Integer> shares, Scanner sc) {
 		/*
 		 * Breaks up a single company into two separate companies based on the user's
 		 * input.
@@ -365,8 +363,8 @@ public class gameFile {
 		 * Parameters: List of companies in the market, list of shares in the market,
 		 * scanner.
 		 * 
-		 * Returns: An ArrayList containing the new list of companies and shares (to be
-		 * unpacked in playGame).
+		 * Calls: companyVerifier, shareVerifier
+	       Called by: playGame
 		 */
 		int initial_share = 1;
 		String identifier = "0";
@@ -405,11 +403,6 @@ public class gameFile {
 		shares.set(breakLocation, aShare);
 		companies.add(breakLocation + 1, newCompany2);
 		shares.add(breakLocation + 1, maxShare - aShare);
-		// Creates the new list of companies and shares(to be unpacked in playGame).
-		ArrayList<Object> arr = new ArrayList<>();
-		arr.add(companies);
-		arr.add(shares);
-		return arr;
 	}
 
 	private static int shareVerifier(String aShare, Scanner sc, int maxShare) {
@@ -421,12 +414,15 @@ public class gameFile {
 		 * the ceiling for how high of a share you can enter.
 		 * 
 		 * Returns: The verified, proper share for Company #_.a (int)
+		 * 
+		 * Calls: None
+		   Called by: breakUp
 		 */
 		int final_aShare = 0;
 		int round_tracker = 0;
 		while (!(final_aShare > 0 && final_aShare < maxShare)) {
 			// Ensures that the user is not re-prompted if already prompted in playGame
-			if (round_tracker !=0)
+			if (round_tracker != 0)
 				aShare = sc.nextLine();
 			round_tracker++;
 			try {
@@ -444,10 +440,7 @@ public class gameFile {
 		return final_aShare;
 	}
 
-	// Suppress warning accounts for type casting of ArrayLists companies and shares
-	// after retrieving from another
-	// method in terms of Object rather than String/Integer.
-	@SuppressWarnings("unchecked")
+
 	private static void playGame(Scanner sc, ArrayList<String> companies, ArrayList<Integer> shares, String mode,
 			String finalRange, String targetComp) {
 		/*
@@ -455,10 +448,12 @@ public class gameFile {
 		 * 
 		 * Parameters: Scanner, companies list, shares list, mode chosen (hhi vs cr4),
 		 * index range to target for, associated level of competition to target for.
+		 * 
+		 * Calls: displayMarket, hhi_calc, cr4_calc, modeSelector, merge, breakUp, rangeFormatter
+		   Called by: main
 		 */
 		String choice;
 		int finalScore;
-		ArrayList<Object> functionOpener = new ArrayList<>();
 		// 5 turns...
 		for (int i = 0; i < 5; i++) {
 			// Entire market is displayed (every company next to their share).
@@ -472,27 +467,23 @@ public class gameFile {
 			System.out.print("\nEnter 1 to merge or 2 to break up (enter 3 to end before your five moves are done): ");
 			choice = sc.nextLine();
 			// Records + verifies the user's choice to merge or break up (or end the game).
-			int final_choice = modeSelector(choice, sc, true);
+			String final_choice = modeSelector(choice, sc, true);
 			// User is repeatedly asked to enter another option if they choose to merge with
 			// only one company present.
-			if (final_choice == 1 && companies.size() == 1) {
-				while (final_choice == 1) {
+			if (final_choice.equals("1") && companies.size() == 1) {
+				while (final_choice.equals("1")) {
 					System.out.println("\nERROR. More than 1 company must be in the market in order to merge.");
 					final_choice = modeSelector("0", sc, true);
 				}
 			}
 			// Calls appropriate procedure for each possible choice from the user.
-			if (final_choice == 3) {
+			if (final_choice.equals("3")) {
 				break;
-			} else if (final_choice == 2) {
-				functionOpener = breakUp(companies, shares, sc);
+			} else if (final_choice.equals("2")) {
+				breakUp(companies, shares, sc);
 			} else {
-				functionOpener = merge(companies, shares, sc);
+				merge(companies, shares, sc);
 			}
-			// If option 1 or 2 was picked, companies and shares are updated via a returned
-			// ArrayList.
-			companies = (ArrayList<String>) functionOpener.get(0);
-			shares = (ArrayList<Integer>) functionOpener.get(1);
 		}
 		// End of loop. Market displayed one more time.
 		displayMarket(companies, shares);
@@ -528,6 +519,9 @@ public class gameFile {
 		 * Parameters: Mode of the game (cr4 or hhi), range of target index.
 		 * 
 		 * Returns: int array of the min and max of the index range.
+		 * 
+		 * Calls: None
+	       Called by: playGame
 		 */
 		String[] initialString;
 		// Creates array to store max and min.
@@ -550,6 +544,9 @@ public class gameFile {
 		 * Parameters: Shares list.
 		 * 
 		 * Returns: Calculated HHI score.
+		 * 
+		 * Calls: None
+		   Called by: hhiMode, playGame
 		 */
 		int hhi = 0;
 		for (int i = 0; i < shares.size(); i++) {
@@ -565,6 +562,9 @@ public class gameFile {
 		 * Parameters: Shares list.
 		 * 
 		 * Returns: Calculated CR4 score.
+		 * 
+		 * Calls: None
+		   Called by: cr4Mode, playGame
 		 */
 		int loop_limit = 0;
 		int cr4 = 0;
@@ -581,4 +581,3 @@ public class gameFile {
 		return cr4;
 	}
 }
-
