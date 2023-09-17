@@ -1,0 +1,37 @@
+If you don't have Java installed on your computer, do these 2 steps first:
+
+1. Download and install JDK:
+   - Go to the Oracle JDK download page: Oracle JDK Downloads.
+   - Accept the Oracle Technology Network License Agreement (if prompted).
+   - Select the version of the JDK you want to download (it's recommended to get the latest version).
+   - Choose the appropriate distribution for your operating system (Windows, macOS, or Linux).
+   - Follow the installation wizard's instructions to install the JDK.
+
+2. Verify Java installation:
+   - Open a command prompt (Windows) or terminal (macOS/Linux).
+   - Type `java -version` and press Enter. You should see the version number of Java, indicating that it was installed successfully.
+
+To download the respository from GitHub:
+
+1. Click on the Code button:
+   - On the repository page, look for a green button that says "Code". It's usually near the upper right side of the page.
+
+2. Download the repository as a ZIP file:
+   - Click on the "Code" button, and then select "Download ZIP". This will download a compressed file that contains all the files and folders from the repository.
+
+3. Extract the ZIP file:
+   - Locate the downloaded ZIP file on your computer (usually in the "Downloads" folder). Double-click the file to extract its contents into a folder. 
+
+4. Ensure that you are aware of and know how to access the file's absolute path:
+   - This will be needed to run the program later on.
+
+5. Open a Command Prompt (Windows) or Terminal (macOS/Linux):
+   - On Windows, you can do this by searching for "cmd" or "Command Prompt" in the start menu.
+   - On macOS, you can find the Terminal in the Applications folder, under Utilities.
+   - On Linux, you can open a terminal using a keyboard shortcut like Ctrl + Alt + T.
+
+6. Navigate to the folder that you created in step 3:
+   - Use the cd command (which stands for "change directory") followed by the path to the folder where the files downloaded from the repository are. 
+   - For example, if your files are in a folder called "my_project" within a folder called "container" on your desktop, you would type: cd Desktop\container\my_project
+
+7. Run gameFile.java by typing: java gameFile.java
